@@ -13,6 +13,10 @@ Facts below come from ios-cepheus `NOTES.md`/`README.md`, Xiaomi's vayu kernel D
   (V14.0.1.0.TJUMIXM), so the stock firmware blobs are still on `vendor`.
 - `max-download-size` 768 MiB. No root shell in Android (device-tree properties unreadable).
 - `fastboot boot` of a recovery image works (official TWRP 3.7.1_12-0 boots from RAM).
+- TWRP 3.7.1_12-0 is flashed to `recovery` since 2026-11-24 (Power + Volume Up from off); the
+  ROM's original recovery is `backup/recovery.img`.
+- USB: the phone's link is flaky on some host ports (`error -71` at enumeration, dropped
+  transfers). The rear port that shows up as `usb 3-1` is stable and pushes ~88 MB/s.
 - Partition backup with checksums in `backup/` (not in git).
 
 ## Confirmed on this unit (live FDT from TWRP, boot.img DTB `dtb2` + `dtbo`)
