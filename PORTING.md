@@ -90,6 +90,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
      vayu's touch SPI pins, and replays Samsung EA8076 panel commands over DSI.
    - `sweetbl=0`: backlight via AMOLED DCS brightness (`SweetFramebuffer.cpp`); vayu's LCD
      backlight is the PM8150L WLED, so leave it where ABL set it.
+   **Done 2026-11-24:** CI run 45447981227 (fork `main`, patches up to 0162) built
+   `kernel.development.sweet`; `tools/build-kernel-boot.sh` packed it and `fastboot boot` ran it.
+   The kernel log scrolled on screen and ended at `mount(9) failed`, i.e. XNU, the vayu ADT, the
+   GIC/timer, the early console and the UFS driver all work, and root mounting fails as
+   expected because `userdata` is still Android's f2fs. No USB device showed up (the USB
+   gadget needs `sweetusb=2`, not passed yet).
 5. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
 
 ## Decisions waiting on you
