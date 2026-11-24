@@ -12,7 +12,7 @@
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 CEPHEUS=${CEPHEUS:-$ROOT/../ios-cepheus}
-OUT=${1:-$ROOT/work/probe-boot.img}
+OUT=$(realpath -m "${1:-$ROOT/work/probe-boot.img}")	# shim/build.sh runs from its own directory
 DTB=$ROOT/stock/boot/dtb
 
 [ -f "$DTB" ] || { echo "missing $DTB: run unpack_bootimg --boot_img backup/boot.img --out stock/boot" >&2; exit 1; }
