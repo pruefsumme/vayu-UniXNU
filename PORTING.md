@@ -71,6 +71,9 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    Success = a dark blue screen with "CEPHEUS shim probe v1" (labels and the 2340-line console
    height are still cepheus's) and a reset back to fastboot. Needs no Apple files. If the phone
    hangs instead, hold Power for ~30 s.
+   **Done 2026-11-24:** ABL took the image, the text showed on screen, and the phone was back in
+   fastboot 9 s later. So `fastboot boot` of our own code, the framebuffer ABL leaves on the
+   video-mode panel, the PMIC reboot reason and PSCI reset all work on vayu.
 3. Fix FB geometry and the watchdog for vayu, then add the vayu memory map to `mkadt.py` and
    build a kernel via Actions; target "waiting for root device".
 4. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
