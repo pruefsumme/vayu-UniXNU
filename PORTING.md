@@ -117,7 +117,13 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    as 1080x2340 because the shim passed cepheus's `FB_W/FB_H` in the boot args; the shim now
    takes the size from the live pipe (fork fix). Second boot (`sweetfb_noconsole=1`, now the RW
    default): the lock screen stays up and fills the whole 1080x2400 panel.
-6. Touch: Novatek NT3667x over (probably bit-banged) SPI on SE17, see the "Touch" row above.
+6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
+   (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
+   `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
+   in their kernel repo (vayu-r-oss). Converted to raw binaries in `stock/touch-fw/` (not in
+   git), 139264 bytes each: fw01 (Tianma, this unit) sha256 `042c1cb8…0177`, fw02 (CSOT)
+   `f6fdeb95…db68`. The XNU driver can read it from `/fw/` on the iOS root with
+   `hakios_adsp_fw_file()` (bsd/dev/hakios.adsp.c) once the root is mounted.
 
 ## Decisions waiting on you
 
