@@ -57,8 +57,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
   `ssh.yml`, `wlan.yml`, all `workflow_dispatch` on `macos-15`). Enable Actions on the fork first.
 - **Shim** builds anywhere with clang + lld; `shim/build.sh` hardcodes `/opt/homebrew` paths
   and a sibling `cepheus-zip-recovery-creator/` for mkbootimg + DTB.
-- **iOS root:** `tools/mkiosroot.sh` supports Arch (`apfs-fuse hfsprogs rsync`). You supply
-  the iPhone X iOS 16.7.16 (20H392) IPSW.
+- **iOS root:** `tools/mkiosroot.sh` (run with sudo) needs apfs-fuse, hfsprogs and rsync. On Arch
+  the first two are AUR-only: `yay -S apfs-fuse-git hfsprogs lzfse` (lzfse unpacks the
+  compressed D22AP device tree for `mkadt.py`'s `/product` node). The IPSW parts come from
+  Apple's CDN with `tools/remotezip.py` (OS `087-86698-044.dmg`, SystemOS cryptex
+  `087-86593-047.dmg`, AppOS cryptex `087-86715-047.dmg`, per the BuildManifest) into
+  `research/ipsw-x/` (git-ignored).
 - **Recovery:** the test loop needs a vayu TWRP/OrangeFox to pull logs and write the root.
 
 ## First steps, in order
