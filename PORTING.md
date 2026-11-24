@@ -74,9 +74,17 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    **Done 2026-11-24:** ABL took the image, the text showed on screen, and the phone was back in
    fastboot 9 s later. So `fastboot boot` of our own code, the framebuffer ABL leaves on the
    video-mode panel, the PMIC reboot reason and PSCI reset all work on vayu.
-3. Fix FB geometry and the watchdog for vayu, then add the vayu memory map to `mkadt.py` and
+   Second probe (geometry on screen): ABL's scanout is **1080x2400, stride 4320 (0x10e0), at
+   0x9c000000**, a8r8g8b8 (the dark slate background came out right).
+3. ADT: `python3 tools/mkadt.py OUT.adt --highmem --amp --vayu` in the fork. `--vayu` refuses to
+   run without `--highmem`: vayu's first bank ends at 0xbbb00000, so the low XNU range
+   (0xb0000000..0xfd000000) would cross a hole. The highmem range 0x100000000..0x1fcc00000 is
+   RAM on vayu (bank 0xc0000000+3G, then 0x180000000+4G).
+   Kernel patches that still hardcode cepheus's 2340 lines: 0083 (early FB), 0095 (GPU present),
+   0112 (corners), 0085 (FTS touch, replaced on vayu anyway).
+4. Patch the 2340-line constants in the kernel for vayu, then
    build a kernel via Actions; target "waiting for root device".
-4. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
+5. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
 
 Rules carried from cepheus: only `fastboot boot` for bring-up images, never flash abl/xbl/tz/
 modem, write the iOS root to `userdata` from recovery, keep backups and Apple/Xiaomi files out
