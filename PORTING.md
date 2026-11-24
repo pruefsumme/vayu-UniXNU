@@ -134,6 +134,13 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    git), 139264 bytes each: fw01 (Tianma, this unit) sha256 `042c1cb8…0177`, fw02 (CSOT)
    `f6fdeb95…db68`. The XNU driver can read it from `/fw/` on the iOS root with
    `hakios_adsp_fw_file()` (bsd/dev/hakios.adsp.c) once the root is mounted.
+   **Touch works (2026-11-24).** Kernel patch 0163 (`bsd/dev/vayu_nvt.c`, CI run 45465728188)
+   with fw01/fw02 copied into `/fw/` on the root (`tools/add-root-files.sh`, then
+   `tools/write-root.sh` sent the changed chunks): tapping and swiping work on the lock screen
+   on the first try, so the guessed pin order (MISO 55, MOSI 56), the bit-banged SPI framing,
+   the per-boot firmware download and the report parsing are right. Reports are polled every
+   8 ms (INT 122 unused, a shortcut). With `sweetusb=2` the phone also showed up as a
+   `cdc_ether` USB Ethernet device (`enp0s20f0u1`, "ios-sweet") on Linux.
 
 ## Decisions waiting on you
 
