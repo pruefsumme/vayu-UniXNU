@@ -106,6 +106,11 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    expected because `userdata` is still Android's f2fs. No USB device showed up (the USB
    gadget needs `sweetusb=2`, not passed yet).
 5. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
+   **Lock screen reached 2026-11-24.** `tools/write-root.sh` put the 20H392 root (built with
+   `mkiosroot.sh` + `sweet-root-tweaks.py`) on userdata; `RW=1 tools/build-kernel-boot.sh` with
+   kernel 0162 booted to the Apple logo and then the lock screen with the clock, before the
+   kernel console drew over it (`sweetfb_noconsole=1` was not set). No touch yet (Novatek
+   driver missing), no USB (`sweetusb=2` not set).
 
 ## Decisions waiting on you
 
