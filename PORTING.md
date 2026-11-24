@@ -12,6 +12,21 @@ Facts below come from ios-cepheus `NOTES.md`/`README.md`, Xiaomi's vayu kernel D
 - ROM: AOSP-based (`aosp_vayu-user`, TQ3A.230901.001.B1) on stock MIUI 14 vendor
   (V14.0.1.0.TJUMIXM), so the stock firmware blobs are still on `vendor`.
 - `max-download-size` 768 MiB. No root shell in Android (device-tree properties unreadable).
+- `fastboot boot` of a recovery image works (official TWRP 3.7.1_12-0 boots from RAM).
+- Partition backup with checksums in `backup/` (not in git).
+
+## Confirmed on this unit (live FDT from TWRP, boot.img DTB `dtb2` + `dtbo`)
+
+| Item | Value |
+|---|---|
+| DTB | `SM8150P v2`, msm-id 0x169 (361), board-id 0x2f from dtbo (`model = "VAYU"`) |
+| RAM banks | 0x80000000 + 0x3bb00000, 0xc0000000 + 0xc0000000, 0x180000000 + 0x100000000 (~7.9 GB) |
+| Panel | `dsi_j20s_36_02_0a_video` = Tianma (display maker 0x36), video mode + DSC |
+| Touch | `novatek,NVT-ts-spi` on SE17 SPI `spi@c80000`, pins GPIO 55/56/57 + CS GPIO 58, reset GPIO 12, IRQ GPIO 122, 10 MHz; firmware `j20s_novatek_ts_fw01.bin` (Tianma) |
+| SE17 | Has `dmas` (GPI DMA) in the DTB, so probably GSI-only like on cepheus: plan for bit-banged SPI on the same pins cepheus bit-bangs for I2C |
+| Keys | vol_up = PM8150 GPIO 6 (same as cepheus); power and vol_down via PON (kpdpwr/resin) |
+| Audio amps | DTS has `ti,tas2557`, `cirrus,cs35l41` and `ti,tas256x` nodes; which one is fitted is still open |
+| Wi-Fi/BT | `wcn3990` nodes |
 
 ## What carries over unchanged (same SoC, same addresses)
 
@@ -29,8 +44,8 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
 | Display | Samsung EA8076 AMOLED, **command mode**, 1080x2340, FB stride 4352 | Tianma/CSOT LCD, **video mode + DSC 1.1**, 1080x2400 @120 Hz; FB stride ? | Early FB easier (scans continuously); GPU present/vsync patches (0087, 0095, 0111, 0121) assume command-mode kickoff and need rework |
 | Backlight | AMOLED DCS brightness (0127-0136) | PM8150L WLED over SPMI, 12-bit | New small driver; keep ABL's level until then |
 | Touch | ST FTS on I2C SE17, bit-banged (SE17 is GSI-only) (0085, 0125-0147) | Novatek NT3667x on **SPI** SE17 @10 MHz, reset GPIO 12, IRQ GPIO 122; per-panel fw `j20s_novatek_ts_fw01/02.bin`, possibly flashless (fw upload every power-up) | Largest board item: new driver, likely bit-banged SPI |
-| Keys | GPIO vol_up 6, PMIC PON | vol_up GPIO ? | Small |
-| RAM | ~6 GB, 3 banks | 8 GB, banks ? | `tools/mkadt.py` memory ranges |
+| Keys | GPIO vol_up 6, PMIC PON | Same: PM8150 GPIO 6 + PON | None expected |
+| RAM | ~6 GB, 3 banks | ~7.9 GB, 3 banks (see above) | `tools/mkadt.py` memory ranges |
 | Audio | CS35L41 on QUAT_MI2S (0160) | CS35L41 **and** TAS256x nodes in DTS; which one is fitted ? | Maybe reusable |
 | Wi-Fi | WCN3990 via `wland` (0123) | `qcom,icnss` + `qca,wcn3990` nodes; 3990 vs 3998 ? | Likely reusable + vayu board data |
 | GPU clocks | 0107 freq table | Speed bins: bin0 585 MHz, bin1 675 MHz (fuse 0x4130) | Small |
@@ -48,9 +63,8 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
 
 ## First steps, in order
 
-1. Boot a vayu TWRP/OrangeFox with `fastboot boot`, then back up `persist`, `persistbak`,
-   `modemst1/2`, `fsg`, `devinfo`, `abl`, `xbl`, `xbl_config`, `boot`, `dtbo`, `vbmeta*`
-   (~350 MiB, minutes). Also dump stock `boot.img` for its DTB. Keep all of it out of git.
+1. ~~Back up the partitions from TWRP~~ (done 2026-11-24: 44 images, ~1 GB, about 30 min over
+   `adb exec-out`; `cust` skipped). Base DTB and dtbo are unpacked in `stock/` (not in git).
 2. Build the probe-only shim (no payload) on Linux with vayu's DTB and `fastboot boot` it.
    Success = a colour fill at 0x9c000000 and a reboot back to fastboot. Needs no Apple files.
 3. Fix FB geometry and the watchdog for vayu, then add the vayu memory map to `mkadt.py` and
