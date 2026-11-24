@@ -65,8 +65,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
 
 1. ~~Back up the partitions from TWRP~~ (done 2026-11-24: 44 images, ~1 GB, about 30 min over
    `adb exec-out`; `cust` skipped). Base DTB and dtbo are unpacked in `stock/` (not in git).
-2. Build the probe-only shim (no payload) on Linux with vayu's DTB and `fastboot boot` it.
-   Success = a colour fill at 0x9c000000 and a reboot back to fastboot. Needs no Apple files.
+2. Build the probe-only shim with `tools/build-probe.sh` (needs `sudo pacman -S clang lld llvm`
+   first), then `fastboot boot work/probe-boot.img`. It is built with `SHIM_NO_UFS`, so it never
+   writes userdata (cepheus logs to the end of userdata, which still holds Android data here).
+   Success = a dark blue screen with "CEPHEUS shim probe v1" (labels and the 2340-line console
+   height are still cepheus's) and a reset back to fastboot. Needs no Apple files. If the phone
+   hangs instead, hold Power for ~30 s.
 3. Fix FB geometry and the watchdog for vayu, then add the vayu memory map to `mkadt.py` and
    build a kernel via Actions; target "waiting for root device".
 4. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
