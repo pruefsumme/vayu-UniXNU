@@ -80,11 +80,26 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    run without `--highmem`: vayu's first bank ends at 0xbbb00000, so the low XNU range
    (0xb0000000..0xfd000000) would cross a hole. The highmem range 0x100000000..0x1fcc00000 is
    RAM on vayu (bank 0xc0000000+3G, then 0x180000000+4G).
-   Kernel patches that still hardcode cepheus's 2340 lines: 0083 (early FB), 0095 (GPU present),
-   0112 (corners), 0085 (FTS touch, replaced on vayu anyway).
-4. Patch the 2340-line constants in the kernel for vayu, then
-   build a kernel via Actions; target "waiting for root device".
+4. Kernel: patch **0162** (fork) moves the panel size into `SweetDisplayMask.h` (1080x2400) for
+   the GPU present path and touch, and sets `SWEET_EARLY_FB_HEIGHT` 2400. All 157 fork patches
+   plus 0162 apply on xnu-8796.141.3 (`work/dxb/xnu` in the fork, local only). Not compiled:
+   XNU needs Xcode, so the next step is the fork's `xnu` workflow, which needs the commits
+   pushed and Actions enabled on the fork. Target: kernel log reaching "waiting for root device".
+   The cepheus FTS touch driver will bit-bang I2C on GPIO 55/56, which are vayu's touch SPI
+   pins: boot with `cepheustouchpanel=0` until the Novatek driver exists.
 5. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
+
+## Decisions waiting on you
+
+- **Where the iOS root goes.** `sweet_ufs.c` mounts one GPT partition on LUN 0 by name
+  (`ufsroot=`, default `userdata`), and the XNU log ring lives at the end of that partition. On
+  vayu, LUN 0 holds only `userdata` (226 GiB, Android's data) and small partitions (`cust` is
+  1 GiB, too small for the root image). Options: wipe Android's userdata and use it like
+  cepheus does (simple, loses Android data; Android can be restored from a ROM afterwards), or
+  shrink userdata and add a partition (keeps Android, but means editing the GPT: risky).
+- **IPSW.** iPhone X (iPhone10,3) iOS 16.7.16 (20H392), several GB from Apple's CDN.
+- **Pushing.** The kernel build runs on the fork's GitHub Actions (macOS runner), so the commits
+  have to be pushed and Actions enabled on the fork.
 
 Rules carried from cepheus: only `fastboot boot` for bring-up images, never flash abl/xbl/tz/
 modem, write the iOS root to `userdata` from recovery, keep backups and Apple/Xiaomi files out
