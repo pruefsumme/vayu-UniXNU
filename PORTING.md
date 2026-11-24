@@ -63,6 +63,11 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
   Apple's CDN with `tools/remotezip.py` (OS `087-86698-044.dmg`, SystemOS cryptex
   `087-86593-047.dmg`, AppOS cryptex `087-86715-047.dmg`, per the BuildManifest) into
   `research/ipsw-x/` (git-ignored).
+  `mkiosroot.sh` ends with `fsck.hfsplus -f -n`, which on Arch's hfsprogs 540.1 reports "Volume
+  header needs minor repair" even right after a clean `-y` pass. With `-d` it prints `invalid
+  primary VHB at 2 result 35`: Apple's `SVerify1.c` takes that branch when reading the primary
+  header fails (35 is an errno, `EDEADLK` on Linux), not when its contents are wrong. On the
+  20H392 image both headers were identical and valid (`HX` v5, journaled, cleanly unmounted).
 - **Recovery:** the test loop needs a vayu TWRP/OrangeFox to pull logs and write the root.
 
 ## First steps, in order
