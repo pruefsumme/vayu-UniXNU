@@ -85,8 +85,11 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    plus 0162 apply on xnu-8796.141.3 (`work/dxb/xnu` in the fork, local only). Not compiled:
    XNU needs Xcode, so the next step is the fork's `xnu` workflow, which needs the commits
    pushed and Actions enabled on the fork. Target: kernel log reaching "waiting for root device".
-   The cepheus FTS touch driver will bit-bang I2C on GPIO 55/56, which are vayu's touch SPI
-   pins: boot with `cepheustouchpanel=0` until the Novatek driver exists.
+   First vayu boots need two cepheus drivers off:
+   - `cepheustouch=0`: the FTS driver (`sweet_fts.c`) bit-bangs I2C on GPIO 55/56, which are
+     vayu's touch SPI pins, and replays Samsung EA8076 panel commands over DSI.
+   - `sweetbl=0`: backlight via AMOLED DCS brightness (`SweetFramebuffer.cpp`); vayu's LCD
+     backlight is the PM8150L WLED, so leave it where ABL set it.
 5. UFS root, launchd, SpringBoard; then touch (Novatek SPI), backlight, Wi-Fi, GPU present.
 
 ## Decisions waiting on you
