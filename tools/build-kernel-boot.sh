@@ -11,7 +11,8 @@
 #
 # RW=1 is for once userdata holds the iOS root (tools/write-root.sh): the
 # root is mounted read-write, XNU keeps its console log at the end of
-# userdata every 2 s, and the shim saves its own log and the previous
+# userdata every 2 s (so it stays off the screen: sweetfb_noconsole=1), and
+# the shim saves its own log and the previous
 # kernel's RAM log there too. Pull them from TWRP with the fork's
 # tools/cepheus-log-pull.sh (xnu|shim|rescue).
 #
@@ -37,7 +38,7 @@ ARGS="$ARGS wdt=-1 unentitled_ios_sim_launch=1 ignition_level=1 wdt_test=no_user
 ARGS="$ARGS launchd_unsecure_cache=1 sweetampforcep=1 cepheustouch=0 sweetbl=0"
 SHIM_CFLAGS=-DSHIM_NO_UFS
 if [ "${RW:-0}" = 1 ]; then
-	ARGS="$ARGS ufsrw=1 rootrw=1 ufslogsecs=2"
+	ARGS="$ARGS ufsrw=1 rootrw=1 ufslogsecs=2 sweetfb_noconsole=1 sweetfb_hz=60"
 	SHIM_CFLAGS=
 fi
 ARGS="$ARGS $EXTRA"
