@@ -111,6 +111,13 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    kernel 0162 booted to the Apple logo and then the lock screen with the clock, before the
    kernel console drew over it (`sweetfb_noconsole=1` was not set). No touch yet (Novatek
    driver missing), no USB (`sweetusb=2` not set).
+   First log (pulled from TWRP with `cepheus-log-pull.sh xnu`): SpringBoard, backboardd and
+   wifid up at ~15 s and never crashed; 376 crash reports, all side extensions (Siri TTS,
+   MacinTalk, Kona synthesizers, Spotlight indexers, a Screen Time widget). `AppleCLCD` came up
+   as 1080x2340 because the shim passed cepheus's `FB_W/FB_H` in the boot args; the shim now
+   takes the size from the live pipe (fork fix). Second boot (`sweetfb_noconsole=1`, now the RW
+   default): the lock screen stays up and fills the whole 1080x2400 panel.
+6. Touch: Novatek NT3667x over (probably bit-banged) SPI on SE17, see the "Touch" row above.
 
 ## Decisions waiting on you
 
