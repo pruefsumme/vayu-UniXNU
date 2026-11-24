@@ -69,6 +69,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
   header fails (35 is an errno, `EDEADLK` on Linux), not when its contents are wrong. On the
   20H392 image both headers were identical and valid (`HX` v5, journaled, cleanly unmounted).
 - **Recovery:** the test loop needs a vayu TWRP/OrangeFox to pull logs and write the root.
+- **Live log over USB** (boot-arg `sweetusb=2`): the phone appears as a USB Ethernet device
+  (phone 192.168.7.2) and sends the XNU console as UDP to 192.168.7.1:5140. On Linux the
+  `cdc_ether` driver should bind it; give the new interface `192.168.7.1/24`
+  (`sudo ip addr add 192.168.7.1/24 dev IFACE`, or a manual NetworkManager profile) and run the
+  fork's `tools/cepheus-live.py logs/live.txt`, which is plain Python. `tools/mac-share.sh` is
+  macOS-only (internet sharing for the phone) and not needed for the log. Not tried on vayu yet.
 
 ## First steps, in order
 
