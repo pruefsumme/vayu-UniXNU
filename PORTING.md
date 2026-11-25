@@ -73,6 +73,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
   header fails (35 is an errno, `EDEADLK` on Linux), not when its contents are wrong. On the
   20H392 image both headers were identical and valid (`HX` v5, journaled, cleanly unmounted).
 - **Recovery:** the test loop needs a vayu TWRP/OrangeFox to pull logs and write the root.
+- **Remote reboot** (works since 2026-11-25): with `sweetusb=2` (RW default) the fork's
+  `tools/cepheus-cmd.py reboot` syncs and PSCI-resets the phone, which lands in **fastboot**
+  ~8 s later (the shim sets the reboot reason), ready for the next `fastboot boot`. The PC side
+  needs 192.168.7.1/24 on the phone's USB interface (MAC 02:00:5e:77:ee:01) for the session:
+  `nmcli device modify IFACE ipv4.method manual ipv4.addresses 192.168.7.1/24
+  ipv4.never-default yes ipv6.method disabled` works without sudo and is not saved.
 - **Live log over USB** (boot-arg `sweetusb=2`): the phone appears as a USB Ethernet device
   (phone 192.168.7.2) and sends the XNU console as UDP to 192.168.7.1:5140. On Linux the
   `cdc_ether` driver should bind it; give the new interface `192.168.7.1/24`
@@ -162,6 +168,13 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    Cepheus (HANDOFF "frame cost is shim throughput") measured ~27-28 ms per full frame on the
    same path, mostly CPU time in metal2vulkan; `sweetgpufreq=5` was estimated at only
    ~1-1.5 ms. Bigger gains need the bridge itself, or a native Metal->Adreno path.
+   Lock screen: iOS dims through the backlight service (`brightness 0`, `FadePeriod 12124`),
+   then sends display off. With `sweetbl=0` there was no backlight service at all; now
+   `sweetbl=1 sweetbl_dcs=0` (service, but no AMOLED DCS writes to the LCD). The black bands on
+   lock came from cepheus's 7-step CPU fade over the 10 MB panel buffer; patch 0164
+   (`sweetfb_fade=0`, RW default) writes black once, after waiting for in-flight GPU presents
+   (one landing afterwards repainted the top ~170 rows). Verified: locking goes black at once,
+   fully. The backlight itself stays on (no WLED driver yet).
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
