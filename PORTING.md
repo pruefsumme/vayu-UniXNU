@@ -140,6 +140,15 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    499 MHz); iOS swapped at most 12.6 fps while swiping (CPU-rendered frames are the limit).
    Touch: trim id `0c 00 00 72 66 03` (NT36672C confirmed), firmware running on the first
    download attempt (~3.5 s of bit-banged SPI), fw ver 07, 16x36 channels, 1080x2400.
+   Metal (2026-11-25): the fork's `userland` workflow builds `SweetMetal2.bundle` (Metal ->
+   metal2vulkan -> Turnip; needed one ARC bridge-cast fix in `NativeBridgeMetalFrontend.mm`).
+   Installed with `DEST=/System/Library/Extensions tools/add-root-files.sh`. The first boot
+   (`GPU=1` + `sweetmtl=2`) stayed on the CPU: the bridge refused the device because
+   `/var/local/m2v-cache` did not exist (`ShaderCache ... PermissionDenied`). Before a Metal
+   boot the root needs `/private/var/local/m2v-cache/` (mode 0777) and
+   `/private/var/local/mtl2-clients` containing `* -chronod` (cepheus HANDOFF: SpringBoard must
+   be listed or the unlock swipe does nothing). Use `/private/var`, not the `/var` symlink, when
+   writing into the mounted image.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
