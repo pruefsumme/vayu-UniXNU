@@ -167,7 +167,10 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    `tools/write-root.sh` sent the changed chunks): tapping and swiping work on the lock screen
    on the first try, so the guessed pin order (MISO 55, MOSI 56), the bit-banged SPI framing,
    the per-boot firmware download and the report parsing are right. Reports are polled every
-   8 ms (INT 122 unused, a shortcut). With `sweetusb=2` the phone also showed up as a
+   8 ms at first; since CI run 45611153050 a report is read only on an INT 122 rising edge,
+   latched by the TLMM and checked every 2 ms (fallback reads every 50 ms with a finger down,
+   1 s otherwise; `vayutouchpoll=1` restores polling). Tested 2026-11-25: touch works, no stuck
+   fingers, UI smoothness about the same (~20 fps by eye). With `sweetusb=2` the phone also showed up as a
    `cdc_ether` USB Ethernet device (`enp0s20f0u1`, "ios-sweet") on Linux.
 
 ## Decisions waiting on you
