@@ -49,7 +49,8 @@ if [ "${RW:-0}" = 1 ]; then
 fi
 GPUFW=()
 if [ "${GPU:-0}" = 1 ]; then
-	ARGS="$ARGS sweetgpu=1"
+	# 585 MHz, the top of the driver's table and inside both vayu speed bins (585/675).
+	ARGS="$ARGS sweetgpu=1 sweetgpufreq=5"
 	GPUFW=(--gpufw "$ROOT/stock/gpu-fw")
 fi
 ARGS="$ARGS $EXTRA"
