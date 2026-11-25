@@ -3,6 +3,7 @@
 #
 #   tools/build-kernel-boot.sh KERNEL [OUT] [EXTRA BOOT-ARGS]
 #   RW=1 tools/build-kernel-boot.sh KERNEL ...
+#   GPU=1 RW=1 tools/build-kernel-boot.sh KERNEL ...
 #                                   default OUT: work/kernel-boot.img
 #
 # Default is read-only: no ufsrw=1/rootrw=1, so XNU never writes userdata,
@@ -15,6 +16,11 @@
 # the shim saves its own log and the previous
 # kernel's RAM log there too. Pull them from TWRP with the fork's
 # tools/cepheus-log-pull.sh (xnu|shim|rescue).
+#
+# GPU=1 turns on the kernel's Adreno 640 driver (sweetgpu=1, the fork's
+# bsd/dev/sweet_gpu.c), which presents and scales the screen. Its firmware,
+# copied from the phone's /vendor/firmware into stock/gpu-fw/ (not in git),
+# goes into the device tree.
 #
 # Nothing resets the phone afterwards (the shim does not arm the watchdog, so
 # cepheusreboot= has no effect): hold Power for ~30 s to get back to fastboot.
@@ -41,11 +47,16 @@ if [ "${RW:-0}" = 1 ]; then
 	ARGS="$ARGS ufsrw=1 rootrw=1 ufslogsecs=2 sweetfb_noconsole=1 sweetfb_hz=60"
 	SHIM_CFLAGS=
 fi
+GPUFW=()
+if [ "${GPU:-0}" = 1 ]; then
+	ARGS="$ARGS sweetgpu=1"
+	GPUFW=(--gpufw "$ROOT/stock/gpu-fw")
+fi
 ARGS="$ARGS $EXTRA"
 
 python3 "$CEPHEUS/tools/mkadt.py" "$ROOT/work/vayu.adt" --highmem --amp --vayu
 python3 "$CEPHEUS/tools/mkpayload.py" "$KERNEL" "$ROOT/work/vayu.adt" "$ROOT/work/payload.bin" \
-	--cmdline "$ARGS" >/dev/null
+	--cmdline "$ARGS" "${GPUFW[@]}" >/dev/null
 MKBOOTIMG=mkbootimg DTB=$DTB SHIM_CFLAGS=$SHIM_CFLAGS \
 	"$CEPHEUS/shim/build.sh" "$ROOT/work/payload.bin" "$OUT"
 echo "boot-args: $ARGS"
