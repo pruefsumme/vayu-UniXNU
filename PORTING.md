@@ -155,6 +155,13 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    56.6 fps at ~5 us per copy; no crashes, no GPU faults. With the cache warm the next boot
    comes straight to the lock screen, a bit smoother and with fewer visual glitches than the
    CPU path.
+   Measured with INT touch (2026-11-25): CPU clusters at their top entries (A55 1785, A76 2419,
+   prime 2956 MHz), GPU fixed at 499 MHz (`sweetgpufreq` default 4; 5 = 585 MHz, inside both
+   vayu speed bins). Best 5 s windows 40-47 fps, but presents are uneven: in the busiest
+   window the GPU present copy averaged 13.5 ms (5 us idle), waiting behind Metal work.
+   Cepheus (HANDOFF "frame cost is shim throughput") measured ~27-28 ms per full frame on the
+   same path, mostly CPU time in metal2vulkan; `sweetgpufreq=5` was estimated at only
+   ~1-1.5 ms. Bigger gains need the bridge itself, or a native Metal->Adreno path.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
