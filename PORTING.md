@@ -149,6 +149,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    `/private/var/local/mtl2-clients` containing `* -chronod` (cepheus HANDOFF: SpringBoard must
    be listed or the unlock swipe does nothing). Use `/private/var`, not the `/var` symlink, when
    writing into the mounted image.
+   **Metal works (2026-11-25).** With both in place, backboardd got `device Turnip Adreno (TM)
+   640` in 659 ms and loaded `libvulkan_freedreno`. On the first boot SpringBoard spent ~60 s
+   compiling shaders into the empty cache (black screen, 0 swaps), then presented up to
+   56.6 fps at ~5 us per copy; no crashes, no GPU faults. With the cache warm the next boot
+   comes straight to the lock screen, a bit smoother and with fewer visual glitches than the
+   CPU path.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
