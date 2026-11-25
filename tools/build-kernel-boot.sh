@@ -27,9 +27,10 @@
 #
 # cepheustouch=0 keeps the Mi 9 touch driver off vayu's touch pins.
 # sweetbl=1 sweetbl_dcs=0 publishes the backlight service iOS dims through
-# (without it, iOS draws the lock fade as frames) but sends no AMOLED DCS
-# brightness commands to vayu's LCD (see PORTING.md). The userland args (ignition_level,
-# launchd_unsecure_cache, ...) are the ones the cepheus runs boot with.
+# but sends no AMOLED DCS brightness commands to vayu's LCD; sweetbl_wled=1
+# drives the LCD's real backlight, the PM8150L WLED (patch 0165). The
+# userland args (ignition_level, launchd_unsecure_cache, ...) are the ones
+# the cepheus runs boot with (see PORTING.md).
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 CEPHEUS=${CEPHEUS:-$ROOT/../ios-cepheus}
