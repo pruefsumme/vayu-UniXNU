@@ -175,6 +175,15 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    (`sweetfb_fade=0`, RW default) writes black once, after waiting for in-flight GPU presents
    (one landing afterwards repainted the top ~170 rows). Verified: locking goes black at once,
    fully. The backlight itself stays on (no WLED driver yet).
+   **Bridge CPU work cut (2026-11-25):** fork bridge patch 0102 (no rebind call logs), fat LTO
+   (SweetMetal2 21.5 -> 15.6 MB), and commit-time IOSurface cleans skipped when the seed is
+   unchanged (`NativeBridgeMetalFrontend.mm`), installed with `tools/install-metal-bundle.sh`.
+   Telemetry (`/var/local/mtl2-telemetry` on, `/var/local/mtl2.log`): commit-time cleans are
+   all skipped (1062 of 1088 calls); swiping now commits 48-57 fps (was up to ~51) but the GPU
+   is 84-95% busy (was 12-65%), the present copy waits 4-13 ms behind backboardd's work and
+   ~40 frames/s reach the panel, with 40-75 ms commit-to-complete. The bottleneck moved from
+   the bridge's CPU time to the GPU. The new build also discarded the Vulkan pipeline cache
+   once (0 hits / 209 misses), which refills with use.
    **Backlight works (2026-11-25):** patch 0165 (`sweetbl_wled=1`, now default) drives the
    PM8150L WLED from CoreBrightness; the slider changes the brightness and locking switches
    the backlight off. Battery: the cepheus fuel gauge works unchanged (23-32% over the day,
