@@ -223,8 +223,17 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    IMEI, gitignored), `wland` from the `wlan` workflow, then
    `CEPH_FILES_HOST=192.168.7.2 sh tools/cepheus-wifi-install.sh` on the running iOS (file
    server over USB, no sudo, adds the `org.iosonpixel.wland` launchd job). Next boot: modem
-   up, radio scanning 2.4 and 5 GHz, 29 networks passed to wifid after ~45 s. Joining not
-   tried yet. Log: `/var/local/wland.log` on the phone.
+   up, radio scanning 2.4 and 5 GHz, 29 networks passed to wifid after ~45 s. Log:
+   `/var/local/wland.log` on the phone.
+   Joining from Settings: the radio joined (WPA2 keys installed, `link up`) but carried almost
+   nothing (tx 5 / rx 1 per 30 s): iOS never asked for an address because configd had no
+   network service for `en0`; `/private/var/preferences/SystemConfiguration/preferences.plist`
+   was the 200-byte stub. Same as cepheus (HANDOFF "L2 join works; DHCP waits on configd").
+   Fix: a service `en0`, `Hardware=AirPort`, `Type=IEEE80211`, IPv4 DHCP, IPv6 Automatic, in
+   its own set (`CurrentSet`), written over the file server (original kept as
+   `preferences.plist.orig`), then a reboot (never restart configd: that took cepheus offline).
+   After that a join from Settings carried real traffic (392 frames out, 293 in within 5 s)
+   and the phone set its clock from the network.
 
 ## Decisions waiting on you
 
