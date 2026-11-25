@@ -136,6 +136,10 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    normal, so the 4352-byte stride switch took on VIG0, and swiping is smoother. The UI is
    still laggy because SpringBoard renders on the CPU; next is the Metal bundle
    (`sweetmtl=2`, the fork's `userland` workflow).
+   Log of that boot: GMU booted, zap shader authenticated, GPU ready in 292 ms (perf vote
+   499 MHz); iOS swapped at most 12.6 fps while swiping (CPU-rendered frames are the limit).
+   Touch: trim id `0c 00 00 72 66 03` (NT36672C confirmed), firmware running on the first
+   download attempt (~3.5 s of bit-banged SPI), fw ver 07, 16x36 channels, 1080x2400.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
