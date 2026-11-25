@@ -43,7 +43,7 @@ mkdir -p "$ROOT/work"
 
 ARGS="debug=0xc serial=3 cpus=8 keepsyms=1 -enable_kprintf_spam -noprogress rd=ufsroot0"
 ARGS="$ARGS wdt=-1 unentitled_ios_sim_launch=1 ignition_level=1 wdt_test=no_user_checkin"
-ARGS="$ARGS launchd_unsecure_cache=1 sweetampforcep=1 cepheustouch=0 sweetbl=1 sweetbl_dcs=0"
+ARGS="$ARGS launchd_unsecure_cache=1 sweetampforcep=1 cepheustouch=0 sweetbl=1 sweetbl_dcs=0 sweetbl_wled=1"
 SHIM_CFLAGS=-DSHIM_NO_UFS
 if [ "${RW:-0}" = 1 ]; then
 	ARGS="$ARGS ufsrw=1 rootrw=1 ufslogsecs=2 sweetfb_noconsole=1 sweetfb_hz=60"
