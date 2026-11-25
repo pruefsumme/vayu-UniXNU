@@ -25,8 +25,10 @@
 # Nothing resets the phone afterwards (the shim does not arm the watchdog, so
 # cepheusreboot= has no effect): hold Power for ~30 s to get back to fastboot.
 #
-# cepheustouch=0 and sweetbl=0 keep the Mi 9 touch and AMOLED backlight code
-# off vayu's hardware (see PORTING.md). The userland args (ignition_level,
+# cepheustouch=0 keeps the Mi 9 touch driver off vayu's touch pins.
+# sweetbl=1 sweetbl_dcs=0 publishes the backlight service iOS dims through
+# (without it, iOS draws the lock fade as frames) but sends no AMOLED DCS
+# brightness commands to vayu's LCD (see PORTING.md). The userland args (ignition_level,
 # launchd_unsecure_cache, ...) are the ones the cepheus runs boot with.
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -41,7 +43,7 @@ mkdir -p "$ROOT/work"
 
 ARGS="debug=0xc serial=3 cpus=8 keepsyms=1 -enable_kprintf_spam -noprogress rd=ufsroot0"
 ARGS="$ARGS wdt=-1 unentitled_ios_sim_launch=1 ignition_level=1 wdt_test=no_user_checkin"
-ARGS="$ARGS launchd_unsecure_cache=1 sweetampforcep=1 cepheustouch=0 sweetbl=0"
+ARGS="$ARGS launchd_unsecure_cache=1 sweetampforcep=1 cepheustouch=0 sweetbl=1 sweetbl_dcs=0"
 SHIM_CFLAGS=-DSHIM_NO_UFS
 if [ "${RW:-0}" = 1 ]; then
 	ARGS="$ARGS ufsrw=1 rootrw=1 ufslogsecs=2 sweetfb_noconsole=1 sweetfb_hz=60"
