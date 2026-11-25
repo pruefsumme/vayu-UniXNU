@@ -185,6 +185,15 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    ~10% CPU and ~110 mA without them (cepheus HANDOFF 2026-11-20). The fork's
    `sweet-root-tweaks.py` now removes both from `launchd.plist`; on vayu's root since
    2026-11-25 (kernel 0166 boot: neither started).
+   **Known issue: first Metal boot after a root sync shows only the kernel console.**
+   `write-root.sh` resets every changed chunk to the PC's image, which wipes iOS's runtime
+   state on the phone, including the Metal shader cache. On the next boot backboardd made its
+   1125x2436 screen surfaces as `0x62336138` ('b3a8', 2 planes, 5 bytes/pixel, rows 5696)
+   instead of BGRA (4608-byte rows); `presentGPU()` rejects that ("surface format/size/pitch"),
+   so the GPU path and its 4352 stride switch never start and the panel keeps the console.
+   Seen twice (first Metal boot, first boot after the vmd/dasd sync). Workaround: boot once
+   more; the boot after picks BGRA again and comes up normally. Proper fixes: blit plane 0 of
+   'b3a8' too, or keep the phone's /var across syncs.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
