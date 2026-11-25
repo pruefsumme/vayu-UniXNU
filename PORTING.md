@@ -180,6 +180,11 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    the backlight off. Battery: the cepheus fuel gauge works unchanged (23-32% over the day,
    ~3.8 V); patch 0166 sets the 5160 mAh design capacity. Plugged into a PC port the phone
    barely charges (-88..+20 mA) while iOS runs; charge it in TWRP or off.
+   Drain: on cepheus `vmd` (Visual Voicemail, label `com.apple.voicemail.vmd`) and `dasd`
+   (`com.apple.dasd`, keeps `coreduetd` busy) looped without a modem, ~4 cores and ~590 mA,
+   ~10% CPU and ~110 mA without them (cepheus HANDOFF 2026-11-20). The fork's
+   `sweet-root-tweaks.py` now removes both from `launchd.plist`; on vayu's root since
+   2026-11-25 (kernel 0166 boot: neither started).
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
