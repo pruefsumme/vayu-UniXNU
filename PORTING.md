@@ -127,6 +127,9 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    as 1080x2340 because the shim passed cepheus's `FB_W/FB_H` in the boot args; the shim now
    takes the size from the live pipe (fork fix). Second boot (`sweetfb_noconsole=1`, now the RW
    default): the lock screen stays up and fills the whole 1080x2400 panel.
+   Display engine as ABL leaves it (shim log): one pipe, VIG0, 1080x2400 at 0x9c000000, stride
+   0x10e0, on CTL0 (layer0 0x1000005, DSC on, INTF1). Cepheus uses VIG0 + VIG1 (540 columns
+   each); `sweet_gpu_panel_stride()` writes both and flushes CTL0, which also covers vayu.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
