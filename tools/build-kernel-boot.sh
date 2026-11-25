@@ -55,7 +55,8 @@ if [ "${RW:-0}" = 1 ]; then
 fi
 GPUFW=()
 if [ "${GPU:-0}" = 1 ]; then
-	# 675 MHz: vayu's GPU is speed bin 1 (patch 0167; older kernels or bin-0 chips use 585).
+	# 675 MHz: vayu's GPU is speed bin 1. Needs kernel patch 0167 (a bin-0 chip falls back to
+	# 585 there); a kernel without 0167 would drop to 257 MHz, so pass sweetgpufreq=5 to those.
 	ARGS="$ARGS sweetgpu=1 sweetgpufreq=6"
 	GPUFW=(--gpufw "$ROOT/stock/gpu-fw")
 fi
