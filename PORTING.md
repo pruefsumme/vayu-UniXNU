@@ -198,16 +198,6 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    `"sRGB"` (true for vayu's LCD). Verified on a freshly reset root: backboardd made BGRA
    surfaces and the GPU path took over at 25.7 s. A sync still empties the Metal shader
    cache, so the first boot after one takes ~1 min longer to reach the lock screen.
-7. **Wi-Fi scans (2026-11-25).** The cepheus stack runs unchanged: every board value `wland`
-   uses matches vayu's DT (modem carve-out 0x8e000000 + 0x9600000, WLAN firmware region
-   0x8bc00000, 3 MB rmtfs shared memory, WLAN SMMU stream 0x640/1; DMA pool 0xE0000000 is free
-   RAM). In the fork: `tools/cepheus-wifi-fw-extract.sh` in TWRP (vayu's modem partition:
-   `modem.mdt`+36 parts, `wlanmdsp.mbn` = WLAN.HL.3.0.c2, `bdwlan.bin`; rmtfs images carry the
-   IMEI, gitignored), `wland` from the `wlan` workflow, then
-   `CEPH_FILES_HOST=192.168.7.2 sh tools/cepheus-wifi-install.sh` on the running iOS (file
-   server over USB, no sudo, adds the `org.iosonpixel.wland` launchd job). Next boot: modem
-   up, radio scanning 2.4 and 5 GHz, 29 networks passed to wifid after ~45 s. Joining not
-   tried yet. Log: `/var/local/wland.log` on the phone.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
@@ -225,6 +215,16 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    1 s otherwise; `vayutouchpoll=1` restores polling). Tested 2026-11-25: touch works, no stuck
    fingers, UI smoothness about the same (~20 fps by eye). With `sweetusb=2` the phone also showed up as a
    `cdc_ether` USB Ethernet device (`enp0s20f0u1`, "ios-sweet") on Linux.
+7. **Wi-Fi scans (2026-11-25).** The cepheus stack runs unchanged: every board value `wland`
+   uses matches vayu's DT (modem carve-out 0x8e000000 + 0x9600000, WLAN firmware region
+   0x8bc00000, 3 MB rmtfs shared memory, WLAN SMMU stream 0x640/1; DMA pool 0xE0000000 is free
+   RAM). In the fork: `tools/cepheus-wifi-fw-extract.sh` in TWRP (vayu's modem partition:
+   `modem.mdt`+36 parts, `wlanmdsp.mbn` = WLAN.HL.3.0.c2, `bdwlan.bin`; rmtfs images carry the
+   IMEI, gitignored), `wland` from the `wlan` workflow, then
+   `CEPH_FILES_HOST=192.168.7.2 sh tools/cepheus-wifi-install.sh` on the running iOS (file
+   server over USB, no sudo, adds the `org.iosonpixel.wland` launchd job). Next boot: modem
+   up, radio scanning 2.4 and 5 GHz, 29 networks passed to wifid after ~45 s. Joining not
+   tried yet. Log: `/var/local/wland.log` on the phone.
 
 ## Decisions waiting on you
 
