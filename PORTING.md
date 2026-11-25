@@ -233,7 +233,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    its own set (`CurrentSet`), written over the file server (original kept as
    `preferences.plist.orig`), then a reboot (never restart configd: that took cepheus offline).
    After that a join from Settings carried real traffic (392 frames out, 293 in within 5 s)
-   and the phone set its clock from the network.
+   and the phone set its clock from the network. Safari loads pages (2026-11-25).
+   Open: the status bar shows no bars after the first join, but does after a Wi-Fi off/on
+   (cepheus saw the same stale first status; a link down/up after the first join fixed it
+   there). Freezes of 1-7 s after touches: the GPU stays 12-25% busy in those windows
+   (longest submit 22 ms), so the stall is CPU-side; first suspect is shader compilation
+   into the cache the last root sync emptied. Check: does a repeated action stay smooth?
 
 ## Decisions waiting on you
 
