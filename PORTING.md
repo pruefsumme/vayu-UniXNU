@@ -191,9 +191,13 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    1125x2436 screen surfaces as `0x62336138` ('b3a8', 2 planes, 5 bytes/pixel, rows 5696)
    instead of BGRA (4608-byte rows); `presentGPU()` rejects that ("surface format/size/pitch"),
    so the GPU path and its 4352 stride switch never start and the panel keeps the console.
-   Seen twice (first Metal boot, first boot after the vmd/dasd sync). Workaround: boot once
-   more; the boot after picks BGRA again and comes up normally. Proper fixes: blit plane 0 of
-   'b3a8' too, or keep the phone's /var across syncs.
+   Seen twice (first Metal boot, first boot after the vmd/dasd sync).
+   **Fixed (2026-11-25):** the cause is the iPhone X `/product` node copied into vayu's ADT,
+   which says `artwork-display-gamut = "P3"`; with fresh caches iOS then renders 10-bit
+   wide colour ('b3a8' is BGR10_XR + an A8 plane). The fork's `mkadt.py --vayu` now reports
+   `"sRGB"` (true for vayu's LCD). Verified on a freshly reset root: backboardd made BGRA
+   surfaces and the GPU path took over at 25.7 s. A sync still empties the Metal shader
+   cache, so the first boot after one takes ~1 min longer to reach the lock screen.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
