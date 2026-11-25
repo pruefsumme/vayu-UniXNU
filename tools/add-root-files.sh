@@ -7,7 +7,7 @@
 #
 # DEST defaults to /fw, where the kernel's firmware loader
 # (hakios_adsp_fw_file) looks first. Everything is installed as root:wheel,
-# replacing what was there.
+# replacing what was there, with the modes the source files have.
 set -euo pipefail
 IMG=${1:?usage: add-root-files.sh ROOT.img FILE...}
 DEST=${DEST:-/fw}
@@ -22,7 +22,7 @@ sudo install -d -m 0755 -o 0 -g 0 "$mnt$DEST"
 for f in "$@"; do
 	target=$mnt$DEST/$(basename "$f")
 	sudo rm -rf "$target"
-	sudo cp -R "$f" "$target"
+	sudo cp -a "$f" "$target"	# keeps modes (the Metal cache dir must stay 0777)
 	sudo chown -R 0:0 "$target"
 	echo "$DEST/$(basename "$f")"
 done
