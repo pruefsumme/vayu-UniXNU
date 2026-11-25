@@ -175,6 +175,11 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    (`sweetfb_fade=0`, RW default) writes black once, after waiting for in-flight GPU presents
    (one landing afterwards repainted the top ~170 rows). Verified: locking goes black at once,
    fully. The backlight itself stays on (no WLED driver yet).
+   **Backlight works (2026-11-25):** patch 0165 (`sweetbl_wled=1`, now default) drives the
+   PM8150L WLED from CoreBrightness; the slider changes the brightness and locking switches
+   the backlight off. Battery: the cepheus fuel gauge works unchanged (23-32% over the day,
+   ~3.8 V); patch 0166 sets the 5160 mAh design capacity. Plugged into a PC port the phone
+   barely charges (-88..+20 mA) while iOS runs; charge it in TWRP or off.
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
