@@ -47,6 +47,9 @@ ARGS="$ARGS launchd_unsecure_cache=1 sweetampforcep=1 cepheustouch=0 sweetbl=1 s
 SHIM_CFLAGS=-DSHIM_NO_UFS
 if [ "${RW:-0}" = 1 ]; then
 	ARGS="$ARGS ufsrw=1 rootrw=1 ufslogsecs=2 sweetfb_noconsole=1 sweetfb_hz=60"
+	# One black write on display off (LCD; patch 0164), and the USB network for the
+	# live log and `cepheus-cmd.py reboot` (phone 192.168.7.2, PC 192.168.7.1).
+	ARGS="$ARGS sweetfb_fade=0 sweetusb=2"
 	SHIM_CFLAGS=
 fi
 GPUFW=()
