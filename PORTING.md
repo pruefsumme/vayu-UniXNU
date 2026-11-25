@@ -130,6 +130,12 @@ hyp 0x85700000 (all seen in vayu's live FDT node names). 16 KiB pages work on th
    Display engine as ABL leaves it (shim log): one pipe, VIG0, 1080x2400 at 0x9c000000, stride
    0x10e0, on CTL0 (layer0 0x1000005, DSC on, INTF1). Cepheus uses VIG0 + VIG1 (540 columns
    each); `sweet_gpu_panel_stride()` writes both and flushes CTL0, which also covers vayu.
+   **GPU present works (2026-11-25).** `GPU=1 RW=1 tools/build-kernel-boot.sh` with kernel 0163
+   and the Adreno firmware from `/vendor/firmware` (`a640_gmu.bin`, `a630_sqe.fw`,
+   `a640_zap.mdt`, `a640_zap.b02`, in `stock/gpu-fw/`, not in git): the lock screen looks
+   normal, so the 4352-byte stride switch took on VIG0, and swiping is smoother. The UI is
+   still laggy because SpringBoard renders on the CPU; next is the Metal bundle
+   (`sweetmtl=2`, the fork's `userland` workflow).
 6. Touch: Novatek **NT36672C** (Xiaomi driver `drivers/input/touchscreen/nt36672c/`) over
    (probably bit-banged) SPI on SE17, see the "Touch" row above. The touch firmware is not on
    `vendor`: Xiaomi builds it into the kernel from `firmware/j20s_novatek_ts_fw0{1,2}.bin.ihex`
